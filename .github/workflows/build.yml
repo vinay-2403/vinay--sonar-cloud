@@ -4,25 +4,19 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened]
+    path: -"comp2/**"
 jobs:
-  sonarcloud:
-    if: startsWith(github.head_ref, 'new_') && github.event.pull_request.merged == false
-    name: SonarCloud
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./comp2
+  sonarqube:
+    name: SonarQube
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Install Dependencies
-        run: npm install --legacy-peer-deps
-      - name: SonarCloud Scan
+      - name: SonarQube Scan
         with:
           projectBaseDir: ./comp2
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
